@@ -187,6 +187,18 @@
               </div>
               <button type="submit" class="btn btn-primary">Activate MFA</button>
             </form>
+
+            <!-- Recovery Codes Container (hidden by default) -->
+            <div id="mfa-backup-codes-area" style="display: none; margin-top: 2rem; border-top: 1px solid var(--border-card); padding-top: 1.5rem;">
+              <h3 style="color: var(--success); font-size: 1.25rem;">🔒 MFA Enabled Successfully!</h3>
+              <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-bottom: 1rem;">
+                ⚠️ IMPORTANT: Save these recovery codes in a secure location. They are single-use and will not be displayed again.
+              </p>
+              <div id="mfa-backup-codes-list" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-card); border-radius: 8px; padding: 1rem; font-family: monospace; font-size: 1.1rem; line-height: 1.6; text-align: center; color: #fff; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <!-- Codes inserted here -->
+              </div>
+              <button class="btn btn-secondary" id="mfa-backup-codes-ack-btn" style="margin-top: 1.5rem; width: auto;">I Have Saved the Codes</button>
+            </div>
           </div>
         </div>
 

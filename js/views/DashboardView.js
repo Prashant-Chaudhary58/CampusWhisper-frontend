@@ -54,6 +54,34 @@ export class DashboardView {
     this.mfaSetupArea         = document.getElementById('mfa-setup-area');
     this.mfaQrContainer       = document.getElementById('mfa-qr-container');
     this.mfaSecretText        = document.getElementById('mfa-secret-text');
+
+    // Recovery codes elements
+    this.mfaBackupArea        = document.getElementById('mfa-backup-codes-area');
+    this.mfaBackupList        = document.getElementById('mfa-backup-codes-list');
+    this.mfaBackupAckBtn     = document.getElementById('mfa-backup-codes-ack-btn');
+  }
+
+  showBackupCodes(codes) {
+    this.mfaSetupArea.style.display = 'none';
+    this.mfaBackupArea.style.display = 'block';
+    this.mfaBackupList.innerHTML = '';
+    
+    codes.forEach(code => {
+      const el = document.createElement('div');
+      el.style.border = '1px dashed rgba(255, 255, 255, 0.15)';
+      el.style.padding = '0.5rem';
+      el.style.borderRadius = '4px';
+      el.style.letterSpacing = '0.1em';
+      el.textContent = code;
+      this.mfaBackupList.appendChild(el);
+    });
+  }
+
+  hideBackupCodes() {
+    if (this.mfaBackupArea) {
+      this.mfaBackupArea.style.display = 'none';
+      this.mfaBackupList.innerHTML = '';
+    }
   }
 
   // ─── Alerts ─────────────────────────────────────────────────────────────────

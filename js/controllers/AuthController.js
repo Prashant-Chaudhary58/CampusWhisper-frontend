@@ -42,6 +42,25 @@ export class AuthController {
     // MFA modal actions
     this.view.mfaForm?.addEventListener('submit',   e => this.#handleMfaVerify(e));
     this.view.mfaCancel?.addEventListener('click',  ()  => this.view.closeMfaModal());
+
+    // MFA mode toggle links
+    this.view.mfaRequestEmailLink?.addEventListener('click', e => {
+      e.preventDefault();
+      this.view.setMfaMode('email');
+    });
+
+    this.view.mfaUseBackupLink?.addEventListener('click', e => {
+      e.preventDefault();
+      this.view.setMfaMode('backup');
+    });
+
+    this.view.mfaUseTotpLink?.addEventListener('click', e => {
+      e.preventDefault();
+      this.view.setMfaMode('totp');
+    });
+
+    // Send email code button
+    this.view.mfaSendEmailBtn?.addEventListener('click', () => this.#handleSendEmailCode());
   }
 
   async #handleLogin(e) {
@@ -52,6 +71,7 @@ export class AuthController {
     try {
       const data = await this.model.login(email, password);
       if (data.mfaRequired) {
+        this.view.setMfaMode('totp'); // Start with TOTP by default
         this.view.openMfaModal();
       } else {
         window.location.href = 'dashboard.html';
@@ -90,13 +110,36 @@ export class AuthController {
     }
   }
 
+  async #handleSendEmailCode() {
+    this.view.clearAlert(this.view.mfaAlertBox);
+    try {
+      this.view.mfaSendEmailBtn.disabled = true;
+      this.view.mfaSendEmailBtn.textContent = 'Sending...';
+      const data = await this.model.requestEmailMfaCode();
+      this.view.showAlert(data.message, 'success', this.view.mfaAlertBox);
+    } catch (err) {
+      this.view.showAlert(err.message, 'danger', this.view.mfaAlertBox);
+    } finally {
+      this.view.mfaSendEmailBtn.disabled = false;
+      this.view.mfaSendEmailBtn.textContent = 'Send Code to Email';
+    }
+  }
+
   async #handleMfaVerify(e) {
     e.preventDefault();
     this.view.clearAlert(this.view.mfaAlertBox);
     const token = this.view.getMfaToken();
 
     try {
-      const data = await this.model.loginVerifyMfa(token);
+      let data;
+      if (this.view.mfaMode === 'totp') {
+        data = await this.model.loginVerifyMfa(token);
+      } else if (this.view.mfaMode === 'email') {
+        data = await this.model.loginVerifyEmailMfa(token);
+      } else if (this.view.mfaMode === 'backup') {
+        data = await this.model.loginVerifyMfaBackup(token);
+      }
+
       this.view.closeMfaModal();
       window.location.href = 'dashboard.html';
     } catch (err) {

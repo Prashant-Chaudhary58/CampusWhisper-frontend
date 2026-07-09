@@ -35,6 +35,54 @@ export class AuthView {
     this.mfaToken      = document.getElementById('mfa-token');
     this.mfaCancel     = document.getElementById('mfa-cancel');
     this.mfaAlertBox   = document.getElementById('mfa-alert-box');
+
+    // New MFA elements
+    this.mfaModalTitle      = document.getElementById('mfa-modal-title');
+    this.mfaModalDesc       = document.getElementById('mfa-modal-desc');
+    this.mfaTokenLabel      = document.getElementById('mfa-token-label');
+    this.mfaSendEmailBtn    = document.getElementById('mfa-send-email-btn');
+    this.mfaRequestEmailLink = document.getElementById('mfa-request-email-link');
+    this.mfaUseBackupLink   = document.getElementById('mfa-use-backup-link');
+    this.mfaUseTotpLink     = document.getElementById('mfa-use-totp-link');
+    this.mfaMode            = 'totp'; // default
+  }
+
+  setMfaMode(mode) {
+    this.mfaMode = mode; // 'totp', 'email', 'backup'
+    this.clearAlert(this.mfaAlertBox);
+    this.mfaForm.reset();
+
+    if (mode === 'totp') {
+      this.mfaModalTitle.textContent = 'Two-Factor Auth';
+      this.mfaModalDesc.textContent = 'Enter the 6-digit verification code from your authenticator app.';
+      this.mfaTokenLabel.textContent = 'Verification Code';
+      this.mfaToken.placeholder = '000000';
+      this.mfaToken.maxLength = 6;
+      this.mfaSendEmailBtn.style.display = 'none';
+      this.mfaRequestEmailLink.style.display = 'block';
+      this.mfaUseBackupLink.style.display = 'block';
+      this.mfaUseTotpLink.style.display = 'none';
+    } else if (mode === 'email') {
+      this.mfaModalTitle.textContent = 'Verify via Email';
+      this.mfaModalDesc.textContent = 'Request a verification PIN sent to your registered email, then check logs/email_inbox.log.';
+      this.mfaTokenLabel.textContent = 'Email PIN Code';
+      this.mfaToken.placeholder = '000000';
+      this.mfaToken.maxLength = 6;
+      this.mfaSendEmailBtn.style.display = 'block';
+      this.mfaRequestEmailLink.style.display = 'none';
+      this.mfaUseBackupLink.style.display = 'block';
+      this.mfaUseTotpLink.style.display = 'block';
+    } else if (mode === 'backup') {
+      this.mfaModalTitle.textContent = 'Use Recovery Code';
+      this.mfaModalDesc.textContent = 'Input a single-use backup recovery code (format: XXXX-XXXX).';
+      this.mfaTokenLabel.textContent = 'Backup Recovery Code';
+      this.mfaToken.placeholder = 'ABCD-1234';
+      this.mfaToken.maxLength = 9;
+      this.mfaSendEmailBtn.style.display = 'none';
+      this.mfaRequestEmailLink.style.display = 'block';
+      this.mfaUseBackupLink.style.display = 'none';
+      this.mfaUseTotpLink.style.display = 'block';
+    }
   }
 
   // ─── Alert helpers ──────────────────────────────────────────────────────────

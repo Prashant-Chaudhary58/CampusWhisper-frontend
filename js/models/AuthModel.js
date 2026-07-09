@@ -101,6 +101,35 @@ export class AuthModel {
     return data;
   }
 
+  async loginVerifyMfaBackup(code) {
+    const res = await this.#request('/api/mfa/backup-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Backup code verification failed');
+    return data;
+  }
+
+  async requestEmailMfaCode() {
+    const res = await this.#request('/api/mfa/email-request', { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Requesting Email code failed');
+    return data;
+  }
+
+  async loginVerifyEmailMfa(token) {
+    const res = await this.#request('/api/mfa/email-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Email code verification failed');
+    return data;
+  }
+
   async disableMfa(token) {
     const res = await this.#request('/api/mfa/disable', {
       method: 'POST',

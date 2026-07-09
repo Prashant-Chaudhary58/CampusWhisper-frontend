@@ -48,6 +48,7 @@ export class DashboardController {
       e.preventDefault();
       this.#stopCommentPolling();
       this.view.clearAlert();
+      this.view.hideBackupCodes();
       this.view.showPanel(this.view.panelList);
       this.#loadReports();
     });
@@ -56,6 +57,7 @@ export class DashboardController {
       e.preventDefault();
       this.#stopCommentPolling();
       this.view.clearAlert();
+      this.view.hideBackupCodes();
       this.view.showPanel(this.view.panelSubmit);
     });
 
@@ -63,6 +65,7 @@ export class DashboardController {
       e.preventDefault();
       this.#stopCommentPolling();
       this.view.clearAlert();
+      this.view.hideBackupCodes();
       this.view.showPanel(this.view.panelMfa);
       this.#loadMfaStatus();
     });
@@ -72,6 +75,7 @@ export class DashboardController {
       e.preventDefault();
       this.#stopCommentPolling();
       this.view.clearAlert();
+      this.view.hideBackupCodes();
       this.view.showPanel(this.view.panelList);
       this.#loadReports();
     });
@@ -205,16 +209,28 @@ export class DashboardController {
       const token = document.getElementById('mfa-activation-code').value.trim();
 
       try {
-        await this.authModel.activateMfa(token);
-        this.view.showAlert('MFA activated successfully!', 'success');
+        const data = await this.authModel.activateMfa(token);
         e.target.reset();
-        setTimeout(() => {
-          this.view.clearAlert();
-          this.#loadMfaStatus();
-        }, 2000);
+        
+        if (data.backupCodes) {
+          this.view.showAlert('MFA activated successfully! Please write down or print the backup recovery codes below.', 'success');
+          this.view.showBackupCodes(data.backupCodes);
+        } else {
+          this.view.showAlert('MFA activated successfully!', 'success');
+          setTimeout(() => {
+            this.view.clearAlert();
+            this.#loadMfaStatus();
+          }, 2000);
+        }
       } catch (err) {
         this.view.showAlert(err.message);
       }
+    });
+
+    this.view.mfaBackupAckBtn?.addEventListener('click', () => {
+      this.view.clearAlert();
+      this.view.hideBackupCodes();
+      this.#loadMfaStatus();
     });
 
     this.view.mfaDisableBtn?.addEventListener('click', async () => {
