@@ -67,8 +67,10 @@ export class AuthController {
     const { email, password } = this.view.getRegisterValues();
 
     // Client-side domain validation (mirrors the server; never the only check)
-    if (!email.endsWith('@university.edu')) {
-      return this.view.showAlert('Only @university.edu institutional emails are accepted.');
+    const allowedDomains = ['@university.edu', '@softwarica.edu', '@coventry.ac.uk'];
+    const hasValidDomain = allowedDomains.some(domain => email.endsWith(domain));
+    if (!hasValidDomain) {
+      return this.view.showAlert('Only institutional emails (@university.edu, @softwarica.edu, or @coventry.ac.uk) are accepted.');
     }
 
     const { isValid } = PasswordValidator.validate(password);
