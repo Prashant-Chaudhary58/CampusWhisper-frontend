@@ -31,12 +31,15 @@ export class DashboardView {
     this.navReports     = document.getElementById('nav-reports');
     this.navSubmit      = document.getElementById('nav-submit');
     this.navSubmitWrap  = document.getElementById('nav-submit-wrapper');
-    this.navMfa         = document.getElementById('nav-mfa');
+    this.sidebarMenuView       = document.getElementById('sidebar-menu-view');
+    this.sidebarMfaView        = document.getElementById('sidebar-mfa-view');
+    this.mfaBackToMenuBtn      = document.getElementById('mfa-back-to-menu-btn');
+    this.closeSidebarMfaBtn    = document.getElementById('close-sidebar-mfa');
 
     // Panels
     this.panelList      = document.getElementById('panel-list');
     this.panelSubmit    = document.getElementById('panel-submit');
-    this.panelMfa       = document.getElementById('panel-mfa');
+
     this.panelDetails   = document.getElementById('panel-details');
     this.panelProfile   = document.getElementById('panel-profile');
     this.panelMyReports = document.getElementById('panel-my-reports');
@@ -95,6 +98,17 @@ export class DashboardView {
     } else {
       this.rightSidebar?.classList.remove('active');
       this.sidebarOverlay?.classList.remove('active');
+      this.showSidebarView('menu');
+    }
+  }
+
+  showSidebarView(viewName) {
+    if (viewName === 'mfa') {
+      if (this.sidebarMenuView) this.sidebarMenuView.style.display = 'none';
+      if (this.sidebarMfaView) this.sidebarMfaView.style.display = 'flex';
+    } else {
+      if (this.sidebarMenuView) this.sidebarMenuView.style.display = 'flex';
+      if (this.sidebarMfaView) this.sidebarMfaView.style.display = 'none';
     }
   }
 
@@ -136,11 +150,11 @@ export class DashboardView {
 
   // ─── Panel switching ─────────────────────────────────────────────────────────
   showPanel(panel) {
-    [this.panelList, this.panelSubmit, this.panelMfa, this.panelDetails, this.panelProfile, this.panelMyReports]
+    [this.panelList, this.panelSubmit, this.panelDetails, this.panelProfile, this.panelMyReports]
       .forEach(p => { if (p) p.style.display = 'none'; });
     if (panel) panel.style.display = 'block';
 
-    [this.navReports, this.navSubmit, this.navMfa]
+    [this.navReports, this.navSubmit]
       .forEach(n => n && n.classList.remove('active'));
 
     if (panel === this.panelList)    this.navReports?.classList.add('active');

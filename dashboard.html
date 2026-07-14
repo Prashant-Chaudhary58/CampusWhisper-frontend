@@ -94,11 +94,6 @@
                 <span>✍️</span> Submit Report
               </a>
             </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link" id="nav-mfa">
-                <span>🔐</span> Security Settings
-              </a>
-            </li>
           </ul>
         </nav>
       </aside>
@@ -158,51 +153,7 @@
           </form>
         </div>
 
-        <!-- 3. SECURITY SETTINGS / MFA PANEL -->
-        <div id="panel-mfa" class="panel-section" style="display: none;">
-          <h2>Security Settings</h2>
-          <div id="mfa-status-box" style="margin-bottom: 2rem;">
-            <h3>Multi-Factor Authentication (MFA)</h3>
-            <p id="mfa-current-status" style="color: var(--text-secondary); margin-top: 0.5rem; margin-bottom: 1.5rem;">Checking MFA status...</p>
-            
-            <button class="btn btn-primary" id="mfa-enable-btn" style="width: auto; display: none;">Setup Authenticator App</button>
-            <button class="btn btn-danger" id="mfa-disable-btn" style="width: auto; display: none;">Disable Authenticator App</button>
-          </div>
 
-          <!-- MFA Setup Container -->
-          <div id="mfa-setup-area" style="display: none; border-top: 1px solid var(--border-card); padding-top: 2rem;">
-            <h3>Enroll Google Authenticator / Authy</h3>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">
-              Scan the QR code below or enter the secret key manually into your app.
-            </p>
-            <div style="text-align: center;">
-              <div class="qr-container" id="mfa-qr-container">
-                <!-- QR Code inserted here -->
-              </div>
-              <p style="margin-top: 0.5rem; font-family: monospace; font-size: 1.1rem; color: #fff;" id="mfa-secret-text"></p>
-            </div>
-
-            <form id="mfa-activation-form" style="margin-top: 2rem; max-width: 320px;">
-              <div class="form-group">
-                <label for="mfa-activation-code">Authenticator Code</label>
-                <input type="text" id="mfa-activation-code" class="form-control" placeholder="000 000" maxlength="6" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Activate MFA</button>
-            </form>
-
-            <!-- Recovery Codes Container (hidden by default) -->
-            <div id="mfa-backup-codes-area" style="display: none; margin-top: 2rem; border-top: 1px solid var(--border-card); padding-top: 1.5rem;">
-              <h3 style="color: var(--success); font-size: 1.25rem;">🔒 MFA Enabled Successfully!</h3>
-              <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-bottom: 1rem;">
-                ⚠️ IMPORTANT: Save these recovery codes in a secure location. They are single-use and will not be displayed again.
-              </p>
-              <div id="mfa-backup-codes-list" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-card); border-radius: 8px; padding: 1rem; font-family: monospace; font-size: 1.1rem; line-height: 1.6; text-align: center; color: #fff; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                <!-- Codes inserted here -->
-              </div>
-              <button class="btn btn-secondary" id="mfa-backup-codes-ack-btn" style="margin-top: 1.5rem; width: auto;">I Have Saved the Codes</button>
-            </div>
-          </div>
-        </div>
 
         <!-- 4. DETAILED REPORT VIEW -->
         <div id="panel-details" class="panel-section" style="display: none;">
@@ -322,38 +273,94 @@
   <!-- RIGHT SIDEBAR -->
   <div id="sidebar-overlay" class="sidebar-overlay"></div>
   <div id="right-sidebar" class="right-sidebar">
-    <div class="right-sidebar-header">
-      <h3 style="margin: 0; color: #fff; font-size: 1.2rem;">User Account</h3>
-      <button id="close-sidebar" class="close-sidebar-btn">&times;</button>
+    <!-- SUB-VIEW 1: MENU VIEW -->
+    <div id="sidebar-menu-view" style="display: flex; flex-direction: column; height: 100%;">
+      <div class="right-sidebar-header">
+        <h3 style="margin: 0; color: #fff; font-size: 1.2rem;">User Account</h3>
+        <button id="close-sidebar" class="close-sidebar-btn">&times;</button>
+      </div>
+      <div class="sidebar-profile-summary">
+        <div class="profile-avatar-large" id="sidebar-avatar-initial">U</div>
+        <div class="sidebar-profile-email" id="sidebar-profile-email">email@example.com</div>
+        <span id="sidebar-role-badge" class="badge">Role</span>
+      </div>
+      <ul class="sidebar-links" style="flex-grow: 1;">
+        <li>
+          <a class="sidebar-link" id="side-nav-profile">
+            <span>👤</span> View Profile
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" id="side-nav-mfa">
+            <span>🔐</span> Security Settings
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" id="side-nav-my-reports">
+            <span>📋</span> My Reports
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link logout-link" id="side-logout-btn">
+            <span>🚪</span> Logout
+          </a>
+        </li>
+      </ul>
     </div>
-    <div class="sidebar-profile-summary">
-      <div class="profile-avatar-large" id="sidebar-avatar-initial">U</div>
-      <div class="sidebar-profile-email" id="sidebar-profile-email">email@example.com</div>
-      <span id="sidebar-role-badge" class="badge">Role</span>
+
+    <!-- SUB-VIEW 2: MFA VIEW -->
+    <div id="sidebar-mfa-view" style="display: none; flex-direction: column; height: 100%; overflow-y: auto;">
+      <div class="right-sidebar-header" style="margin-bottom: 1.5rem;">
+        <h3 style="margin: 0; color: #fff; font-size: 1.2rem;">MFA Settings</h3>
+        <button id="close-sidebar-mfa" class="close-sidebar-btn">&times;</button>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <a href="#" id="mfa-back-to-menu-btn" style="color: var(--accent-color); text-decoration: none; font-weight: 600; font-size: 0.9rem;">← Back to Account Menu</a>
+      </div>
+
+      <div id="mfa-status-box" style="margin-bottom: 1.5rem;">
+        <h4 style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.05em;">Multi-Factor Authentication (MFA)</h4>
+        <p id="mfa-current-status" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; margin-bottom: 1rem;">Checking MFA status...</p>
+        
+        <button class="btn btn-primary" id="mfa-enable-btn" style="width: 100%; display: none;">Setup Authenticator App</button>
+        <button class="btn btn-danger" id="mfa-disable-btn" style="width: 100%; display: none;">Disable Authenticator App</button>
+      </div>
+
+      <!-- MFA Setup Container -->
+      <div id="mfa-setup-area" style="display: none; border-top: 1px solid var(--border-card); padding-top: 1.5rem;">
+        <h4 style="font-size: 0.95rem; color: #fff; margin-bottom: 0.5rem;">Enroll Authenticator</h4>
+        <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">
+          Scan the QR code or enter the secret key manually into Google Authenticator or Authy.
+        </p>
+        <div style="text-align: center;">
+          <div class="qr-container" id="mfa-qr-container" style="padding: 0.8rem;">
+            <!-- QR Code inserted here -->
+          </div>
+          <p style="margin-top: 0.5rem; font-family: monospace; font-size: 0.95rem; color: #fff; word-break: break-all;" id="mfa-secret-text"></p>
+        </div>
+
+        <form id="mfa-activation-form" style="margin-top: 1.5rem;">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="mfa-activation-code" style="font-size: 0.8rem;">Authenticator Code</label>
+            <input type="text" id="mfa-activation-code" class="form-control" placeholder="000000" maxlength="6" required style="text-align: center; letter-spacing: 0.1em;">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Activate MFA</button>
+        </form>
+
+        <!-- Recovery Codes Container (hidden by default) -->
+        <div id="mfa-backup-codes-area" style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--border-card); padding-top: 1rem;">
+          <h4 style="color: var(--success); font-size: 1.05rem; margin-bottom: 0.5rem;">🔒 MFA Enabled!</h4>
+          <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem; margin-bottom: 1rem;">
+            ⚠️ Save these recovery codes safely. They are single-use.
+          </p>
+          <div id="mfa-backup-codes-list" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-card); border-radius: 8px; padding: 0.8rem; font-family: monospace; font-size: 0.95rem; line-height: 1.5; text-align: center; color: #fff; display: grid; grid-template-columns: 1fr; gap: 0.4rem;">
+            <!-- Codes inserted here -->
+          </div>
+          <button class="btn btn-secondary" id="mfa-backup-codes-ack-btn" style="margin-top: 1rem; width: 100%; font-size: 0.85rem;">I Have Saved the Codes</button>
+        </div>
+      </div>
     </div>
-    <ul class="sidebar-links">
-      <li>
-        <a class="sidebar-link" id="side-nav-profile">
-          <span>👤</span> View Profile
-        </a>
-      </li>
-      <li>
-        <a class="sidebar-link" id="side-nav-mfa">
-          <span>🔐</span> Security Settings
-        </a>
-      </li>
-      <li>
-        <a class="sidebar-link" id="side-nav-my-reports">
-          <span>📋</span> My Reports
-        </a>
-      </li>
-      <li>
-        <a class="sidebar-link logout-link" id="side-logout-btn">
-          <span>🚪</span> Logout
-        </a>
-      </li>
-    </ul>
-  </div>
 
   <script type="module" src="js/dashboard.js"></script>
 </body>

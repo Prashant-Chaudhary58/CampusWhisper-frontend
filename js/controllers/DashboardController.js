@@ -65,12 +65,20 @@ export class DashboardController {
 
     this.view.sideNavMfa?.addEventListener('click', e => {
       e.preventDefault();
-      this.view.toggleSidebar(false);
+      this.view.showSidebarView('mfa');
       this.#stopCommentPolling();
       this.view.clearAlert();
       this.view.hideBackupCodes();
-      this.view.showPanel(this.view.panelMfa);
       this.#loadMfaStatus();
+    });
+
+    this.view.closeSidebarMfaBtn?.addEventListener('click', () => {
+      this.view.toggleSidebar(false);
+    });
+
+    this.view.mfaBackToMenuBtn?.addEventListener('click', e => {
+      e.preventDefault();
+      this.view.showSidebarView('menu');
     });
 
     this.view.sideNavMyReports?.addEventListener('click', e => {
@@ -105,14 +113,7 @@ export class DashboardController {
       this.view.showPanel(this.view.panelSubmit);
     });
 
-    this.view.navMfa?.addEventListener('click', e => {
-      e.preventDefault();
-      this.#stopCommentPolling();
-      this.view.clearAlert();
-      this.view.hideBackupCodes();
-      this.view.showPanel(this.view.panelMfa);
-      this.#loadMfaStatus();
-    });
+
 
     // Back button on detail panel
     document.getElementById('details-back-btn')?.addEventListener('click', e => {
