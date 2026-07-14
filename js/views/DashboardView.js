@@ -89,6 +89,23 @@ export class DashboardView {
     this.mfaBackupArea        = document.getElementById('mfa-backup-codes-area');
     this.mfaBackupList        = document.getElementById('mfa-backup-codes-list');
     this.mfaBackupAckBtn     = document.getElementById('mfa-backup-codes-ack-btn');
+
+    // Logout confirm modal
+    this.logoutConfirmModal   = document.getElementById('logout-confirm-modal');
+    this.logoutConfirmYes     = document.getElementById('logout-confirm-yes');
+    this.logoutConfirmNo      = document.getElementById('logout-confirm-no');
+  }
+
+  showLogoutConfirmModal(show) {
+    if (show) {
+      if (this.logoutConfirmModal) {
+        this.logoutConfirmModal.classList.add('active');
+      }
+    } else {
+      if (this.logoutConfirmModal) {
+        this.logoutConfirmModal.classList.remove('active');
+      }
+    }
   }
 
   toggleSidebar(show) {

@@ -55,6 +55,24 @@
     #reports-list-container::-webkit-scrollbar-thumb:hover, #my-reports-list-container::-webkit-scrollbar-thumb:hover {
       background: var(--accent-color);
     }
+    .modal-overlay {
+      display: none !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(0, 0, 0, 0.75) !important;
+      backdrop-filter: blur(8px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 999999 !important;
+    }
+    .modal-overlay.active {
+      display: flex !important;
+    }
+
     .report-details-container {
       display: grid;
       grid-template-columns: 1fr 380px;
@@ -456,6 +474,22 @@
         </div>
       </div>
     </div>
+
+
+
+  <!-- LOGOUT CONFIRMATION MODAL -->
+  <div id="logout-confirm-modal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 360px; text-align: center; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 16px; padding: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+      <h3 style="margin-bottom: 1rem; color: #fff; font-size: 1.25rem;">Confirm Logout</h3>
+      <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+        You will get logged out of CampusWhisper. Are you sure?
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center;">
+        <button id="logout-confirm-no" class="btn btn-secondary" style="flex: 1;">No</button>
+        <button id="logout-confirm-yes" class="btn btn-danger" style="flex: 1;">Yes</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="js/dashboard.js"></script>
 </body>

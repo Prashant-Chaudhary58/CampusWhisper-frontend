@@ -20,20 +20,35 @@ export class DashboardController {
 
   async init() {
     await this.authModel.ensureCsrf();
-    await this.#loadProfile();
-    this.#bindNavEvents();
-    this.#bindReportEvents();
-    this.#bindMfaEvents();
-  }
-
-  // ─── Profile & Auth ──────────────────────────────────────────────────────────
-  async #loadProfile() {
+    
     try {
       this.#currentUser = await this.authModel.getProfile();
       this.view.renderHeader(this.#currentUser);
-      await this.#loadReports();
     } catch {
       window.location.href = 'index.html';
+      return;
+    }
+
+    // Initialize state history: The browser's initial entry is null. We push panel-list on top.
+    history.pushState({ panelId: 'panel-list' }, '');
+
+    window.addEventListener('popstate', e => this.#handlePopState(e));
+
+    this.#bindNavEvents();
+    this.#bindReportEvents();
+    this.#bindMfaEvents();
+    this.#bindHistoryModalEvents();
+
+    // Load initial list content
+    await this.#loadReports();
+  }
+
+  async #loadProfileDetails() {
+    try {
+      this.#currentUser = await this.authModel.getProfile();
+      this.view.renderHeader(this.#currentUser);
+    } catch (err) {
+      this.view.showAlert(`Error loading profile: ${err.message}`);
     }
   }
 
@@ -56,11 +71,7 @@ export class DashboardController {
     this.view.sideNavProfile?.addEventListener('click', e => {
       e.preventDefault();
       this.view.toggleSidebar(false);
-      this.#stopCommentPolling();
-      this.view.clearAlert();
-      this.view.hideBackupCodes();
-      this.view.showPanel(this.view.panelProfile);
-      this.#loadProfile();
+      this.#navigateTo('panel-profile');
     });
 
     this.view.sideNavMfa?.addEventListener('click', e => {
@@ -84,11 +95,7 @@ export class DashboardController {
     this.view.sideNavMyReports?.addEventListener('click', e => {
       e.preventDefault();
       this.view.toggleSidebar(false);
-      this.#stopCommentPolling();
-      this.view.clearAlert();
-      this.view.hideBackupCodes();
-      this.view.showPanel(this.view.panelMyReports);
-      this.#loadMyReports();
+      this.#navigateTo('panel-my-reports');
     });
 
     this.view.logoutBtn?.addEventListener('click', async () => {
@@ -98,19 +105,12 @@ export class DashboardController {
 
     this.view.navReports?.addEventListener('click', e => {
       e.preventDefault();
-      this.#stopCommentPolling();
-      this.view.clearAlert();
-      this.view.hideBackupCodes();
-      this.view.showPanel(this.view.panelList);
-      this.#loadReports();
+      this.#navigateTo('panel-list');
     });
 
     this.view.navSubmit?.addEventListener('click', e => {
       e.preventDefault();
-      this.#stopCommentPolling();
-      this.view.clearAlert();
-      this.view.hideBackupCodes();
-      this.view.showPanel(this.view.panelSubmit);
+      this.#navigateTo('panel-submit');
     });
 
 
@@ -118,11 +118,69 @@ export class DashboardController {
     // Back button on detail panel
     document.getElementById('details-back-btn')?.addEventListener('click', e => {
       e.preventDefault();
-      this.#stopCommentPolling();
-      this.view.clearAlert();
-      this.view.hideBackupCodes();
-      this.view.showPanel(this.view.panelList);
-      this.#loadReports();
+      history.back(); // Naturally goes back in history stack
+    });
+  }
+
+  #navigateTo(panelId, pushState = true) {
+    this.#stopCommentPolling();
+    this.view.clearAlert();
+    this.view.hideBackupCodes();
+
+    let targetPanel = null;
+    let loadFn = null;
+
+    if (panelId === 'panel-list') {
+      targetPanel = this.view.panelList;
+      loadFn = () => this.#loadReports();
+    } else if (panelId === 'panel-submit') {
+      targetPanel = this.view.panelSubmit;
+    } else if (panelId === 'panel-profile') {
+      targetPanel = this.view.panelProfile;
+      loadFn = () => this.#loadProfileDetails();
+    } else if (panelId === 'panel-my-reports') {
+      targetPanel = this.view.panelMyReports;
+      loadFn = () => this.#loadMyReports();
+    } else if (panelId.startsWith('panel-details:')) {
+      const caseId = panelId.split(':')[1];
+      targetPanel = this.view.panelDetails;
+      loadFn = () => this.#openDetailContent(caseId);
+    }
+
+    if (targetPanel) {
+      this.view.showPanel(targetPanel);
+      if (loadFn) loadFn();
+    }
+
+    if (pushState) {
+      history.pushState({ panelId }, '');
+    }
+  }
+
+  #handlePopState(e) {
+    const state = e.state;
+    console.log('[PopState] popped state:', state);
+    if (!state || !state.panelId) {
+      // Immediately push state back so they stay locked on dashboard if they click cancel (No)
+      history.pushState({ panelId: 'panel-list' }, '');
+      this.view.showLogoutConfirmModal(true);
+      return;
+    }
+    this.#navigateTo(state.panelId, false);
+  }
+
+  #bindHistoryModalEvents() {
+    this.view.logoutConfirmNo?.addEventListener('click', () => {
+      this.view.showLogoutConfirmModal(false);
+    });
+
+    this.view.logoutConfirmYes?.addEventListener('click', async () => {
+      this.view.showLogoutConfirmModal(false);
+      try {
+        await this.authModel.logout();
+      } finally {
+        window.location.href = 'index.html';
+      }
     });
   }
 
@@ -216,9 +274,7 @@ export class DashboardController {
         this.view.showAlert(`Report submitted! Save your Case ID: ${result.caseId}`, 'success');
         e.target.reset();
         setTimeout(() => {
-          this.view.clearAlert();
-          this.view.showPanel(this.view.panelList);
-          this.#loadReports();
+          this.#navigateTo('panel-list');
         }, 3000);
       } catch (err) {
         this.view.showAlert(err.message);
@@ -257,11 +313,11 @@ export class DashboardController {
   }
 
   async #openDetail(caseId) {
-    this.#activeCaseId = caseId;
-    this.#stopCommentPolling();
-    this.view.clearAlert();
-    this.view.showPanel(this.view.panelDetails);
+    this.#navigateTo(`panel-details:${caseId}`);
+  }
 
+  async #openDetailContent(caseId) {
+    this.#activeCaseId = caseId;
     try {
       const report = await this.reportModel.getReport(caseId);
       this.view.renderReportDetail(report, this.#currentUser.role);
