@@ -95,6 +95,26 @@ class ReportService {
     if (!res.ok) throw new Error(data.error || 'Failed to toggle disagreement');
     return data;
   }
+
+  async updateReport(caseId, { title, category, description }) {
+    const res = await this.#request(`/api/reports/${caseId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, category, description })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to update report');
+    return data;
+  }
+
+  async deleteReport(caseId) {
+    const res = await this.#request(`/api/reports/${caseId}`, {
+      method: 'DELETE'
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to delete report');
+    return data;
+  }
 }
 
 export const reportService = new ReportService();

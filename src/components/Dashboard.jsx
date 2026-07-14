@@ -356,6 +356,10 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
                 caseId={detailCaseId}
                 userRole={user?.role}
                 onBack={() => { history.back(); }}
+                onDeleted={() => {
+                  navigateTo('list');
+                  loadReports();
+                }}
               />
             )}
 

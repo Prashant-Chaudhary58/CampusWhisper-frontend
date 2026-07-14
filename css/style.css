@@ -981,3 +981,41 @@ select.form-control option {
   }
 }
 
+/* Discussion Board Comment Bubbles */
+.comment-bubble {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  max-width: 85%;
+  align-self: flex-start;
+  transition: var(--transition);
+}
+
+.comment-bubble.moderator {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.25);
+  align-self: flex-end;
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.comment-text {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.comment-input-area {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
