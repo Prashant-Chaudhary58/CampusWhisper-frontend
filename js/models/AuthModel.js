@@ -7,7 +7,7 @@ export class AuthModel {
   #csrfToken = null;
 
   async #fetchCsrf() {
-    const res = await fetch('/api/csrf-token');
+    const res = await fetch('/api/csrf-token', { credentials: 'include' });
     const data = await res.json();
     this.#csrfToken = data.csrfToken;
   }
