@@ -83,6 +83,65 @@
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(99, 102, 241, 0.3);
     }
+    .footer {
+      background: rgba(11, 15, 25, 0.6);
+      border-top: 1px solid var(--border-card);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1.5rem 2rem;
+      margin-top: auto;
+      width: 100%;
+    }
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      text-align: center;
+    }
+    .footer-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      letter-spacing: -0.01em;
+    }
+    .footer-tagline {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .footer-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 0.8rem;
+      font-size: 0.75rem;
+      color: rgba(156, 163, 175, 0.6);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .footer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    @media (max-width: 640px) {
+      .footer-meta {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -292,6 +351,19 @@
       </section>
     </div>
   </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <span>🤫</span> CampusWhisper
+      </div>
+      <p class="footer-tagline">Secure. Anonymous. Accountable. Empowering voices on campus.</p>
+      <div class="footer-meta">
+        <span>© 2026 CampusWhisper. All rights secured.</span>
+        <span class="footer-badge">🔒 End-to-End Encrypted</span>
+      </div>
+    </div>
+  </footer>
 
   <!-- RIGHT SIDEBAR -->
   <div id="sidebar-overlay" class="sidebar-overlay"></div>
