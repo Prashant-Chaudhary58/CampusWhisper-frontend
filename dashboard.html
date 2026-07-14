@@ -67,9 +67,11 @@
   <header class="header-bar">
     <div style="font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em;">CampusWhisper</div>
     <div class="header-user">
-      <span id="user-display" style="font-size: 0.9rem; color: var(--text-secondary);">Loading Profile...</span>
-      <span id="role-badge" class="badge" style="display: none;">Role</span>
-      <button class="btn btn-secondary" id="logout-btn" style="width: auto; padding: 0.5rem 1rem; font-size: 0.85rem;">Logout</button>
+      <div id="profile-trigger" class="profile-trigger">
+        <div class="profile-avatar-small" id="profile-avatar-initial">U</div>
+        <span id="user-display" style="font-size: 0.9rem; color: var(--text-primary); font-weight: 500;">Loading Profile...</span>
+        <span id="role-badge" class="badge" style="display: none;">Role</span>
+      </div>
     </div>
   </header>
 
@@ -279,9 +281,63 @@
             </form>
           </div>
         </div>
+
+        <!-- 5. DETAILED PROFILE PANEL -->
+        <div id="panel-profile" class="panel-section" style="display: none;">
+          <h2>My Profile Details</h2>
+          <p style="color: var(--text-secondary); margin-bottom: 2rem;">Manage and view your security clearance and profile information.</p>
+          
+          <div class="profile-details-grid">
+            <div class="profile-info-card">
+              <div class="profile-info-label">Email Address</div>
+              <div class="profile-info-value" id="profile-detail-email">-</div>
+            </div>
+            
+            <div class="profile-info-card">
+              <div class="profile-info-label">Security Role</div>
+              <div class="profile-info-value" id="profile-detail-role">-</div>
+            </div>
+            
+            <div class="profile-info-card">
+              <div class="profile-info-label">MFA Protection</div>
+              <div class="profile-info-value" id="profile-detail-mfa">-</div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+  <div id="right-sidebar" class="right-sidebar">
+    <div class="right-sidebar-header">
+      <h3 style="margin: 0; color: #fff; font-size: 1.2rem;">User Account</h3>
+      <button id="close-sidebar" class="close-sidebar-btn">&times;</button>
+    </div>
+    <div class="sidebar-profile-summary">
+      <div class="profile-avatar-large" id="sidebar-avatar-initial">U</div>
+      <div class="sidebar-profile-email" id="sidebar-profile-email">email@example.com</div>
+      <span id="sidebar-role-badge" class="badge">Role</span>
+    </div>
+    <ul class="sidebar-links">
+      <li>
+        <a class="sidebar-link" id="side-nav-profile">
+          <span>👤</span> View Profile
+        </a>
+      </li>
+      <li>
+        <a class="sidebar-link" id="side-nav-mfa">
+          <span>🔐</span> Security Settings
+        </a>
+      </li>
+      <li>
+        <a class="sidebar-link logout-link" id="side-logout-btn">
+          <span>🚪</span> Logout
+        </a>
+      </li>
+    </ul>
+  </div>
 
   <script type="module" src="js/dashboard.js"></script>
 </body>

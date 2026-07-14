@@ -39,6 +39,40 @@ export class DashboardController {
 
   // ─── Navigation ──────────────────────────────────────────────────────────────
   #bindNavEvents() {
+    // Sidebar toggles
+    this.view.profileTrigger?.addEventListener('click', () => {
+      this.view.toggleSidebar(true);
+    });
+
+    this.view.closeSidebarBtn?.addEventListener('click', () => {
+      this.view.toggleSidebar(false);
+    });
+
+    this.view.sidebarOverlay?.addEventListener('click', () => {
+      this.view.toggleSidebar(false);
+    });
+
+    // Sidebar Links
+    this.view.sideNavProfile?.addEventListener('click', e => {
+      e.preventDefault();
+      this.view.toggleSidebar(false);
+      this.#stopCommentPolling();
+      this.view.clearAlert();
+      this.view.hideBackupCodes();
+      this.view.showPanel(this.view.panelProfile);
+      this.#loadProfile();
+    });
+
+    this.view.sideNavMfa?.addEventListener('click', e => {
+      e.preventDefault();
+      this.view.toggleSidebar(false);
+      this.#stopCommentPolling();
+      this.view.clearAlert();
+      this.view.hideBackupCodes();
+      this.view.showPanel(this.view.panelMfa);
+      this.#loadMfaStatus();
+    });
+
     this.view.logoutBtn?.addEventListener('click', async () => {
       try { await this.authModel.logout(); }
       finally { window.location.href = 'index.html'; }

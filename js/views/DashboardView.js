@@ -10,8 +10,22 @@ export class DashboardView {
     // Header
     this.userDisplay    = document.getElementById('user-display');
     this.roleBadge      = document.getElementById('role-badge');
-    this.logoutBtn      = document.getElementById('logout-btn');
     this.alertBox       = document.getElementById('alert-box');
+
+    // Right Sidebar elements
+    this.profileTrigger        = document.getElementById('profile-trigger');
+    this.profileAvatarInitial  = document.getElementById('profile-avatar-initial');
+    this.rightSidebar          = document.getElementById('right-sidebar');
+    this.sidebarOverlay        = document.getElementById('sidebar-overlay');
+    this.closeSidebarBtn       = document.getElementById('close-sidebar');
+    this.sidebarAvatarInitial  = document.getElementById('sidebar-avatar-initial');
+    this.sidebarProfileEmail   = document.getElementById('sidebar-profile-email');
+    this.sidebarRoleBadge      = document.getElementById('sidebar-role-badge');
+
+    // Sidebar navigation links
+    this.sideNavProfile        = document.getElementById('side-nav-profile');
+    this.sideNavMfa            = document.getElementById('side-nav-mfa');
+    this.logoutBtn             = document.getElementById('side-logout-btn');
 
     // Navigation links
     this.navReports     = document.getElementById('nav-reports');
@@ -24,6 +38,12 @@ export class DashboardView {
     this.panelSubmit    = document.getElementById('panel-submit');
     this.panelMfa       = document.getElementById('panel-mfa');
     this.panelDetails   = document.getElementById('panel-details');
+    this.panelProfile   = document.getElementById('panel-profile');
+
+    // Profile detail panel fields
+    this.profileDetailEmail = document.getElementById('profile-detail-email');
+    this.profileDetailRole  = document.getElementById('profile-detail-role');
+    this.profileDetailMfa   = document.getElementById('profile-detail-mfa');
 
     // Reports list
     this.reportsLoading = document.getElementById('reports-loading');
@@ -59,6 +79,16 @@ export class DashboardView {
     this.mfaBackupArea        = document.getElementById('mfa-backup-codes-area');
     this.mfaBackupList        = document.getElementById('mfa-backup-codes-list');
     this.mfaBackupAckBtn     = document.getElementById('mfa-backup-codes-ack-btn');
+  }
+
+  toggleSidebar(show) {
+    if (show) {
+      this.rightSidebar?.classList.add('active');
+      this.sidebarOverlay?.classList.add('active');
+    } else {
+      this.rightSidebar?.classList.remove('active');
+      this.sidebarOverlay?.classList.remove('active');
+    }
   }
 
   showBackupCodes(codes) {
@@ -99,7 +129,7 @@ export class DashboardView {
 
   // ─── Panel switching ─────────────────────────────────────────────────────────
   showPanel(panel) {
-    [this.panelList, this.panelSubmit, this.panelMfa, this.panelDetails]
+    [this.panelList, this.panelSubmit, this.panelMfa, this.panelDetails, this.panelProfile]
       .forEach(p => { if (p) p.style.display = 'none'; });
     if (panel) panel.style.display = 'block';
 
@@ -113,10 +143,27 @@ export class DashboardView {
 
   // ─── Header ─────────────────────────────────────────────────────────────────
   renderHeader(user) {
+    const initial = (user.email || 'U').charAt(0).toUpperCase();
+    if (this.profileAvatarInitial) this.profileAvatarInitial.textContent = initial;
+    if (this.sidebarAvatarInitial) this.sidebarAvatarInitial.textContent = initial;
+
     this.userDisplay.textContent = user.email;
     this.roleBadge.textContent   = user.role;
     this.roleBadge.style.display = 'inline-block';
     this.roleBadge.className     = `badge ${user.role === 'Reporter' ? 'badge-open' : 'badge-review'}`;
+
+    if (this.sidebarProfileEmail) this.sidebarProfileEmail.textContent = user.email;
+    if (this.sidebarRoleBadge) {
+      this.sidebarRoleBadge.textContent = user.role;
+      this.sidebarRoleBadge.className = `badge ${user.role === 'Reporter' ? 'badge-open' : 'badge-review'}`;
+    }
+
+    if (this.profileDetailEmail) this.profileDetailEmail.textContent = user.email;
+    if (this.profileDetailRole) this.profileDetailRole.textContent = user.role;
+    if (this.profileDetailMfa) {
+      this.profileDetailMfa.textContent = user.mfaEnabled ? '🛡️ Enabled' : '⚠️ Disabled';
+      this.profileDetailMfa.style.color = user.mfaEnabled ? 'var(--success)' : 'var(--warning)';
+    }
 
     if (user.role !== 'Reporter') {
       this.navSubmitWrap.style.display = 'none';
