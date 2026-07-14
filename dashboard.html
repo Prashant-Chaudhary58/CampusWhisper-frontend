@@ -304,6 +304,17 @@
             </div>
           </div>
         </div>
+
+        <!-- 6. MY REPORTS PANEL -->
+        <div id="panel-my-reports" class="panel-section" style="display: none;">
+          <h2>My Incident Reports</h2>
+          <p style="color: var(--text-secondary); margin-bottom: 2rem;">Review and track the status of all incident reports you have submitted.</p>
+          <div id="my-reports-loading" style="text-align: center; color: var(--text-secondary); margin-top: 2rem;">Loading reports...</div>
+          <div id="my-reports-empty" style="display: none; text-align: center; color: var(--text-secondary); margin-top: 3rem;">
+            You have not submitted any reports yet.
+          </div>
+          <div id="my-reports-list-container"></div>
+        </div>
       </section>
     </div>
   </main>
@@ -329,6 +340,11 @@
       <li>
         <a class="sidebar-link" id="side-nav-mfa">
           <span>🔐</span> Security Settings
+        </a>
+      </li>
+      <li>
+        <a class="sidebar-link" id="side-nav-my-reports">
+          <span>📋</span> My Reports
         </a>
       </li>
       <li>

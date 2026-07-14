@@ -22,8 +22,9 @@ export class ReportModel {
     return res;
   }
 
-  async getReports() {
-    const res = await this.#request('/api/reports');
+  async getReports(mine = false) {
+    const url = mine ? '/api/reports?mine=true' : '/api/reports';
+    const res = await this.#request(url);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed to fetch reports');
     return data.reports;

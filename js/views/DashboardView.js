@@ -39,6 +39,13 @@ export class DashboardView {
     this.panelMfa       = document.getElementById('panel-mfa');
     this.panelDetails   = document.getElementById('panel-details');
     this.panelProfile   = document.getElementById('panel-profile');
+    this.panelMyReports = document.getElementById('panel-my-reports');
+
+    // My Reports panel elements
+    this.myReportsLoading = document.getElementById('my-reports-loading');
+    this.myReportsEmpty   = document.getElementById('my-reports-empty');
+    this.myReportsList    = document.getElementById('my-reports-list-container');
+    this.sideNavMyReports = document.getElementById('side-nav-my-reports');
 
     // Profile detail panel fields
     this.profileDetailEmail = document.getElementById('profile-detail-email');
@@ -129,7 +136,7 @@ export class DashboardView {
 
   // ─── Panel switching ─────────────────────────────────────────────────────────
   showPanel(panel) {
-    [this.panelList, this.panelSubmit, this.panelMfa, this.panelDetails, this.panelProfile]
+    [this.panelList, this.panelSubmit, this.panelMfa, this.panelDetails, this.panelProfile, this.panelMyReports]
       .forEach(p => { if (p) p.style.display = 'none'; });
     if (panel) panel.style.display = 'block';
 
@@ -177,6 +184,67 @@ export class DashboardView {
     this.reportsList.innerHTML        = '';
   }
 
+  createReportCard(report, onCardClick, onPinClick, onAgreeClick, onDisagreeClick) {
+    const badgeClass = {
+      'Open': 'badge-open',
+      'Under Review': 'badge-review',
+      'Resolved': 'badge-resolved'
+    }[report.status] || 'badge-open';
+
+    const card = document.createElement('div');
+    card.className = 'report-card';
+    card.innerHTML = `
+      <div class="report-header">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <button class="pin-btn ${report.isPinned ? 'pinned' : ''}" title="${report.isPinned ? 'Unpin report' : 'Pin report'}">
+            📌
+          </button>
+          <span class="report-case-id">${escapeHtml(report.caseId)}</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          ${report.isAnonymous ? '<span class="badge badge-anon">Anonymous</span>' : ''}
+          <span class="badge ${badgeClass}">${escapeHtml(report.status)}</span>
+        </div>
+      </div>
+      <h3 style="font-size:1.1rem;color:#fff;margin-bottom:0.4rem;">${escapeHtml(report.title)}</h3>
+      <p class="report-card-desc">
+        ${escapeHtml(report.description)}
+      </p>
+      <div style="margin-top:1rem;font-size:0.75rem;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+        <span>${escapeHtml(report.category)}</span>
+        <div style="display:flex;align-items:center;gap:1.2rem;">
+          <div class="vote-container">
+            <button class="vote-btn agree-btn ${report.userHasAgreed ? 'voted' : ''}" title="Agree with report">
+              <span>✓</span> <span class="vote-count">${report.agreeCount || 0}</span>
+            </button>
+            <button class="vote-btn disagree-btn ${report.userHasDisagreed ? 'voted' : ''}" title="Disagree with report">
+              <span>✗</span> <span class="vote-count">${report.disagreeCount || 0}</span>
+            </button>
+          </div>
+          <span>${new Date(report.createdAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+        </div>
+      </div>
+    `;
+
+    card.querySelector('.pin-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      onPinClick(report.caseId);
+    });
+
+    card.querySelector('.agree-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      onAgreeClick(report.caseId);
+    });
+
+    card.querySelector('.disagree-btn').addEventListener('click', e => {
+      e.stopPropagation();
+      onDisagreeClick(report.caseId);
+    });
+
+    card.addEventListener('click', () => onCardClick(report.caseId));
+    return card;
+  }
+
   renderReports(reports, onCardClick, onPinClick, onAgreeClick, onDisagreeClick) {
     this.reportsLoading.style.display = 'none';
 
@@ -189,64 +257,31 @@ export class DashboardView {
     this.reportsList.innerHTML = '';
 
     reports.forEach(report => {
-      const badgeClass = {
-        'Open': 'badge-open',
-        'Under Review': 'badge-review',
-        'Resolved': 'badge-resolved'
-      }[report.status] || 'badge-open';
-
-      const card = document.createElement('div');
-      card.className = 'report-card';
-      card.innerHTML = `
-        <div class="report-header">
-          <div style="display:flex;align-items:center;gap:0.5rem;">
-            <button class="pin-btn ${report.isPinned ? 'pinned' : ''}" title="${report.isPinned ? 'Unpin report' : 'Pin report'}">
-              📌
-            </button>
-            <span class="report-case-id">${escapeHtml(report.caseId)}</span>
-          </div>
-          <div style="display:flex;gap:0.5rem;align-items:center;">
-            ${report.isAnonymous ? '<span class="badge badge-anon">Anonymous</span>' : ''}
-            <span class="badge ${badgeClass}">${escapeHtml(report.status)}</span>
-          </div>
-        </div>
-        <h3 style="font-size:1.1rem;color:#fff;margin-bottom:0.4rem;">${escapeHtml(report.title)}</h3>
-        <p class="report-card-desc">
-          ${escapeHtml(report.description)}
-        </p>
-        <div style="margin-top:1rem;font-size:0.75rem;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-          <span>${escapeHtml(report.category)}</span>
-          <div style="display:flex;align-items:center;gap:1.2rem;">
-            <div class="vote-container">
-              <button class="vote-btn agree-btn ${report.userHasAgreed ? 'voted' : ''}" title="Agree with report">
-                <span>✓</span> <span class="vote-count">${report.agreeCount || 0}</span>
-              </button>
-              <button class="vote-btn disagree-btn ${report.userHasDisagreed ? 'voted' : ''}" title="Disagree with report">
-                <span>✗</span> <span class="vote-count">${report.disagreeCount || 0}</span>
-              </button>
-            </div>
-            <span>${new Date(report.createdAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
-          </div>
-        </div>
-      `;
-
-      card.querySelector('.pin-btn').addEventListener('click', e => {
-        e.stopPropagation();
-        onPinClick(report.caseId);
-      });
-
-      card.querySelector('.agree-btn').addEventListener('click', e => {
-        e.stopPropagation();
-        onAgreeClick(report.caseId);
-      });
-
-      card.querySelector('.disagree-btn').addEventListener('click', e => {
-        e.stopPropagation();
-        onDisagreeClick(report.caseId);
-      });
-
-      card.addEventListener('click', () => onCardClick(report.caseId));
+      const card = this.createReportCard(report, onCardClick, onPinClick, onAgreeClick, onDisagreeClick);
       this.reportsList.appendChild(card);
+    });
+  }
+
+  setMyReportsLoading() {
+    this.myReportsLoading.style.display = 'block';
+    this.myReportsEmpty.style.display   = 'none';
+    this.myReportsList.innerHTML        = '';
+  }
+
+  renderMyReports(reports, onCardClick, onPinClick, onAgreeClick, onDisagreeClick) {
+    this.myReportsLoading.style.display = 'none';
+
+    if (!reports || reports.length === 0) {
+      this.myReportsEmpty.style.display = 'block';
+      return;
+    }
+
+    this.myReportsEmpty.style.display = 'none';
+    this.myReportsList.innerHTML = '';
+
+    reports.forEach(report => {
+      const card = this.createReportCard(report, onCardClick, onPinClick, onAgreeClick, onDisagreeClick);
+      this.myReportsList.appendChild(card);
     });
   }
 

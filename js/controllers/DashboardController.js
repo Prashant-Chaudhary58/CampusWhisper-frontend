@@ -73,6 +73,16 @@ export class DashboardController {
       this.#loadMfaStatus();
     });
 
+    this.view.sideNavMyReports?.addEventListener('click', e => {
+      e.preventDefault();
+      this.view.toggleSidebar(false);
+      this.#stopCommentPolling();
+      this.view.clearAlert();
+      this.view.hideBackupCodes();
+      this.view.showPanel(this.view.panelMyReports);
+      this.#loadMyReports();
+    });
+
     this.view.logoutBtn?.addEventListener('click', async () => {
       try { await this.authModel.logout(); }
       finally { window.location.href = 'index.html'; }
@@ -132,10 +142,26 @@ export class DashboardController {
     }
   }
 
+  async #loadMyReports() {
+    this.view.setMyReportsLoading();
+    try {
+      const reports = await this.reportModel.getReports(true);
+      this.view.renderMyReports(
+        reports,
+        caseId => this.#openDetail(caseId),
+        caseId => this.#togglePin(caseId),
+        caseId => this.#handleAgree(caseId),
+        caseId => this.#handleDisagree(caseId)
+      );
+    } catch (err) {
+      this.view.showAlert(`Error loading my reports: ${err.message}`);
+    }
+  }
+
   async #togglePin(caseId) {
     try {
       await this.reportModel.togglePin(caseId);
-      await this.#loadReports();
+      await this.#reloadActivePanel();
     } catch (err) {
       this.view.showAlert(`Error toggling pin: ${err.message}`);
     }
@@ -144,7 +170,7 @@ export class DashboardController {
   async #handleAgree(caseId) {
     try {
       await this.reportModel.agreeReport(caseId);
-      await this.#loadReports();
+      await this.#reloadActivePanel();
     } catch (err) {
       this.view.showAlert(`Error toggling agreement: ${err.message}`);
     }
@@ -153,9 +179,17 @@ export class DashboardController {
   async #handleDisagree(caseId) {
     try {
       await this.reportModel.disagreeReport(caseId);
-      await this.#loadReports();
+      await this.#reloadActivePanel();
     } catch (err) {
       this.view.showAlert(`Error toggling disagreement: ${err.message}`);
+    }
+  }
+
+  async #reloadActivePanel() {
+    if (this.view.panelMyReports && this.view.panelMyReports.style.display === 'block') {
+      await this.#loadMyReports();
+    } else {
+      await this.#loadReports();
     }
   }
 
