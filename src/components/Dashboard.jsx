@@ -265,7 +265,7 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
   const sortedReports = [...reports].sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className="dashboard-page">
       {/* ── Sticky Top Header ── */}
       <header className="header-bar">
         <div style={{ fontWeight: 700, fontSize: '1.25rem', letterSpacing: '-0.02em' }}>CampusWhisper</div>

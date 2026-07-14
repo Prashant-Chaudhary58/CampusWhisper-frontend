@@ -34,6 +34,12 @@ body {
   overflow-x: hidden;
 }
 
+#root {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .container {
   width: 100%;
   max-width: 1200px;
@@ -772,5 +778,206 @@ select.form-control option {
 .vote-count {
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+/* ── Dashboard Page Styles ────────────────────────────────────────────────── */
+
+/* Dashboard body background override */
+.dashboard-page {
+  background-image: radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+                    radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Sticky Top Header */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  background: rgba(11, 15, 25, 0.8);
+  border-bottom: 1px solid var(--border-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Main content wrapper */
+.main-wrapper {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Panel section */
+.panel-section {
+  display: none;
+}
+
+/* Scrollable report list containers */
+#reports-list-container,
+#my-reports-list-container {
+  max-height: 720px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+#reports-list-container::-webkit-scrollbar,
+#my-reports-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#reports-list-container::-webkit-scrollbar-track,
+#my-reports-list-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 3px;
+}
+
+#reports-list-container::-webkit-scrollbar-thumb,
+#my-reports-list-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+#reports-list-container::-webkit-scrollbar-thumb:hover,
+#my-reports-list-container::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color);
+}
+
+/* Report detail two-column layout */
+.report-details-container {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+}
+
+@media (max-width: 968px) {
+  .report-details-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Attachment badges in detail view */
+.attachment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-card);
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  margin-right: 0.5rem;
+  font-size: 0.85rem;
+  color: #fff;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.attachment-badge:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Generic card utility */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Profile avatar in panels */
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #10b981 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+/* Footer */
+.footer {
+  background: rgba(11, 15, 25, 0.6);
+  border-top: 1px solid var(--border-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 1.5rem 2rem;
+  margin-top: auto;
+  width: 100%;
+}
+
+.footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.footer-logo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  letter-spacing: -0.01em;
+}
+
+.footer-tagline {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 0.8rem;
+  font-size: 0.75rem;
+  color: rgba(156, 163, 175, 0.6);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  color: var(--success);
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .footer-meta {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
