@@ -123,7 +123,9 @@ export class DashboardController {
       this.view.renderReports(
         reports,
         caseId => this.#openDetail(caseId),
-        caseId => this.#togglePin(caseId)
+        caseId => this.#togglePin(caseId),
+        caseId => this.#handleAgree(caseId),
+        caseId => this.#handleDisagree(caseId)
       );
     } catch (err) {
       this.view.showAlert(`Error loading reports: ${err.message}`);
@@ -136,6 +138,24 @@ export class DashboardController {
       await this.#loadReports();
     } catch (err) {
       this.view.showAlert(`Error toggling pin: ${err.message}`);
+    }
+  }
+
+  async #handleAgree(caseId) {
+    try {
+      await this.reportModel.agreeReport(caseId);
+      await this.#loadReports();
+    } catch (err) {
+      this.view.showAlert(`Error toggling agreement: ${err.message}`);
+    }
+  }
+
+  async #handleDisagree(caseId) {
+    try {
+      await this.reportModel.disagreeReport(caseId);
+      await this.#loadReports();
+    } catch (err) {
+      this.view.showAlert(`Error toggling disagreement: ${err.message}`);
     }
   }
 

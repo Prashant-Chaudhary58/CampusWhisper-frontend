@@ -720,3 +720,57 @@ select.form-control option {
   opacity: 1;
 }
 
+/* Agree & Disagree Voting Buttons */
+.vote-container {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.vote-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-card);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.vote-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.vote-btn.agree-btn.voted {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--success);
+}
+
+.vote-btn.agree-btn:hover:not(.voted) {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--success);
+}
+
+.vote-btn.disagree-btn.voted {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--danger);
+}
+
+.vote-btn.disagree-btn:hover:not(.voted) {
+  border-color: rgba(239, 68, 68, 0.4);
+  color: var(--danger);
+}
+
+.vote-count {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+

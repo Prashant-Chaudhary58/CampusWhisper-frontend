@@ -83,4 +83,22 @@ export class ReportModel {
     if (!res.ok) throw new Error(data.error || 'Failed to toggle pin');
     return data;
   }
+
+  async agreeReport(caseId) {
+    const res = await this.#request(`/api/reports/${caseId}/agree`, {
+      method: 'PATCH'
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to toggle agreement');
+    return data;
+  }
+
+  async disagreeReport(caseId) {
+    const res = await this.#request(`/api/reports/${caseId}/disagree`, {
+      method: 'PATCH'
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to toggle disagreement');
+    return data;
+  }
 }

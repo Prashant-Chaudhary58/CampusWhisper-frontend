@@ -177,7 +177,7 @@ export class DashboardView {
     this.reportsList.innerHTML        = '';
   }
 
-  renderReports(reports, onCardClick, onPinClick) {
+  renderReports(reports, onCardClick, onPinClick, onAgreeClick, onDisagreeClick) {
     this.reportsLoading.style.display = 'none';
 
     if (!reports || reports.length === 0) {
@@ -214,15 +214,35 @@ export class DashboardView {
         <p class="report-card-desc">
           ${escapeHtml(report.description)}
         </p>
-        <div style="margin-top:0.8rem;font-size:0.75rem;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;">
+        <div style="margin-top:1rem;font-size:0.75rem;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
           <span>${escapeHtml(report.category)}</span>
-          <span>${new Date(report.createdAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+          <div style="display:flex;align-items:center;gap:1.2rem;">
+            <div class="vote-container">
+              <button class="vote-btn agree-btn ${report.userHasAgreed ? 'voted' : ''}" title="Agree with report">
+                <span>✓</span> <span class="vote-count">${report.agreeCount || 0}</span>
+              </button>
+              <button class="vote-btn disagree-btn ${report.userHasDisagreed ? 'voted' : ''}" title="Disagree with report">
+                <span>✗</span> <span class="vote-count">${report.disagreeCount || 0}</span>
+              </button>
+            </div>
+            <span>${new Date(report.createdAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+          </div>
         </div>
       `;
 
       card.querySelector('.pin-btn').addEventListener('click', e => {
         e.stopPropagation();
         onPinClick(report.caseId);
+      });
+
+      card.querySelector('.agree-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        onAgreeClick(report.caseId);
+      });
+
+      card.querySelector('.disagree-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        onDisagreeClick(report.caseId);
       });
 
       card.addEventListener('click', () => onCardClick(report.caseId));
