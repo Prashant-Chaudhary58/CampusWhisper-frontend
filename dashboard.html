@@ -16,9 +16,13 @@
       justify-content: space-between;
       align-items: center;
       padding: 1.2rem 2rem;
-      background: rgba(17, 24, 39, 0.4);
+      background: rgba(11, 15, 25, 0.8);
       border-bottom: 1px solid var(--border-card);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     .header-user {
       display: flex;
@@ -31,6 +35,25 @@
       margin: 0 auto;
       width: 100%;
       flex-grow: 1;
+    }
+    #reports-list-container, #my-reports-list-container {
+      max-height: 720px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+    #reports-list-container::-webkit-scrollbar, #my-reports-list-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    #reports-list-container::-webkit-scrollbar-track, #my-reports-list-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 3px;
+    }
+    #reports-list-container::-webkit-scrollbar-thumb, #my-reports-list-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+    #reports-list-container::-webkit-scrollbar-thumb:hover, #my-reports-list-container::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-color);
     }
     .report-details-container {
       display: grid;
