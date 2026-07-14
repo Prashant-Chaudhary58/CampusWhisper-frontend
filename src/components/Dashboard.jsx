@@ -150,8 +150,9 @@ function LogoutModal({ show, onConfirm, onCancel }) {
 
 // ─── Main Dashboard ─────────────────────────────────────────────────────────
 export default function Dashboard({ user, onLogout, refreshUser }) {
-  const [activePanel, setActivePanel]   = useState('list');  // 'list' | 'submit' | 'detail' | 'profile' | 'my-reports'
+  const [activePanel, setActivePanel]   = useState('list');
   const [detailCaseId, setDetailCaseId] = useState(null);
+  const [detailSource, setDetailSource] = useState('list'); // 'list' | 'my-reports'
   const [reports, setReports]           = useState([]);
   const [myReports, setMyReports]       = useState([]);
   const [loadingReports, setLoadingReports] = useState(true);
@@ -335,7 +336,7 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
                 <div id="reports-list-container">
                   {sortedReports.map(r => (
                     <ReportCard key={r.caseId} report={r}
-                      onCardClick={(id) => { setDetailCaseId(id); navigateTo('detail'); }}
+                      onCardClick={(id) => { setDetailCaseId(id); setDetailSource('list'); navigateTo('detail'); }}
                       onPinClick={handlePin}
                       onAgreeClick={handleAgree}
                       onDisagreeClick={handleDisagree}
@@ -355,10 +356,11 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
               <ReportDetail
                 caseId={detailCaseId}
                 userRole={user?.role}
+                allowCrud={detailSource === 'my-reports'}
                 onBack={() => { history.back(); }}
                 onDeleted={() => {
-                  navigateTo('list');
-                  loadReports();
+                  navigateTo('my-reports');
+                  loadMyReports();
                 }}
               />
             )}
@@ -378,7 +380,7 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
                 <div id="my-reports-list-container">
                   {myReports.map(r => (
                     <ReportCard key={r.caseId} report={r}
-                      onCardClick={(id) => { setDetailCaseId(id); navigateTo('detail'); }}
+                      onCardClick={(id) => { setDetailCaseId(id); setDetailSource('my-reports'); navigateTo('detail'); }}
                       onPinClick={async (id) => {
                         await reportService.togglePin(id);
                         setMyReports(prev => prev.map(r => r.caseId === id ? { ...r, isPinned: !r.isPinned } : r));
@@ -402,7 +404,6 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
           <div className="footer-meta">
             <span>© {new Date().getFullYear()} CampusWhisper. All rights reserved.</span>
             <span className="footer-badge">🛡️ End-to-End Encrypted</span>
-            <span>Powered by argon2 + MFA</span>
           </div>
         </div>
       </footer>

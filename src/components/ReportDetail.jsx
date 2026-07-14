@@ -94,7 +94,7 @@ function EditPanel({ report, onSave, onCancel }) {
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────
-export default function ReportDetail({ caseId, userRole, onBack, onDeleted }) {
+export default function ReportDetail({ caseId, userRole, allowCrud = false, onBack, onDeleted }) {
   const [report, setReport]           = useState(null);
   const [comments, setComments]       = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -190,8 +190,8 @@ export default function ReportDetail({ caseId, userRole, onBack, onDeleted }) {
           ← Back to Reports
         </button>
 
-        {/* Show Edit/Delete only if the current user is the owner */}
-        {report.isOwner && (
+        {/* Show Edit/Delete only if user is the owner AND viewing from My Reports */}
+        {report.isOwner && allowCrud && (
           <div style={{ display: 'flex', gap: '0.75rem' }}>
             <button
               className="btn btn-secondary"
@@ -234,7 +234,7 @@ export default function ReportDetail({ caseId, userRole, onBack, onDeleted }) {
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 <span className={`badge ${badgeClass}`}>{report.status}</span>
                 {report.isAnonymous && <span className="badge badge-anon">Anonymous</span>}
-                {report.isOwner && (
+                {report.isOwner && allowCrud && (
                   <span style={{
                     background: 'rgba(99,102,241,0.12)', color: 'var(--accent-color)',
                     border: '1px solid rgba(99,102,241,0.3)', borderRadius: '20px',
