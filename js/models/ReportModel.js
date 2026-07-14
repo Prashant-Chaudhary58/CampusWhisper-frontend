@@ -74,4 +74,13 @@ export class ReportModel {
     if (!res.ok) throw new Error(data.error || 'Failed to post comment');
     return data;
   }
+
+  async togglePin(caseId) {
+    const res = await this.#request(`/api/reports/${caseId}/pin`, {
+      method: 'PATCH'
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to toggle pin');
+    return data;
+  }
 }

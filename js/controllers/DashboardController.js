@@ -120,9 +120,22 @@ export class DashboardController {
     this.view.setReportsLoading();
     try {
       const reports = await this.reportModel.getReports();
-      this.view.renderReports(reports, caseId => this.#openDetail(caseId));
+      this.view.renderReports(
+        reports,
+        caseId => this.#openDetail(caseId),
+        caseId => this.#togglePin(caseId)
+      );
     } catch (err) {
       this.view.showAlert(`Error loading reports: ${err.message}`);
+    }
+  }
+
+  async #togglePin(caseId) {
+    try {
+      await this.reportModel.togglePin(caseId);
+      await this.#loadReports();
+    } catch (err) {
+      this.view.showAlert(`Error toggling pin: ${err.message}`);
     }
   }
 

@@ -177,7 +177,7 @@ export class DashboardView {
     this.reportsList.innerHTML        = '';
   }
 
-  renderReports(reports, onCardClick) {
+  renderReports(reports, onCardClick, onPinClick) {
     this.reportsLoading.style.display = 'none';
 
     if (!reports || reports.length === 0) {
@@ -199,21 +199,32 @@ export class DashboardView {
       card.className = 'report-card';
       card.innerHTML = `
         <div class="report-header">
-          <span class="report-case-id">${escapeHtml(report.caseId)}</span>
-          <div style="display:flex;gap:0.5rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <button class="pin-btn ${report.isPinned ? 'pinned' : ''}" title="${report.isPinned ? 'Unpin report' : 'Pin report'}">
+              📌
+            </button>
+            <span class="report-case-id">${escapeHtml(report.caseId)}</span>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
             ${report.isAnonymous ? '<span class="badge badge-anon">Anonymous</span>' : ''}
             <span class="badge ${badgeClass}">${escapeHtml(report.status)}</span>
           </div>
         </div>
         <h3 style="font-size:1.1rem;color:#fff;margin-bottom:0.4rem;">${escapeHtml(report.title)}</h3>
-        <p style="color:var(--text-secondary);font-size:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+        <p class="report-card-desc">
           ${escapeHtml(report.description)}
         </p>
-        <div style="margin-top:0.8rem;font-size:0.75rem;color:var(--text-secondary);display:flex;justify-content:space-between;">
+        <div style="margin-top:0.8rem;font-size:0.75rem;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;">
           <span>${escapeHtml(report.category)}</span>
-          <span>${new Date(report.createdAt).toLocaleDateString()}</span>
+          <span>${new Date(report.createdAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
         </div>
       `;
+
+      card.querySelector('.pin-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        onPinClick(report.caseId);
+      });
+
       card.addEventListener('click', () => onCardClick(report.caseId));
       this.reportsList.appendChild(card);
     });
