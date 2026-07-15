@@ -993,8 +993,14 @@ select.form-control option {
 }
 
 .comment-bubble.moderator {
-  background: rgba(99, 102, 241, 0.08);
-  border-color: rgba(99, 102, 241, 0.25);
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.2);
+  align-self: flex-start;
+}
+
+.comment-bubble.me {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.45);
   align-self: flex-end;
 }
 

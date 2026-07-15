@@ -356,6 +356,7 @@ export default function Dashboard({ user, onLogout, refreshUser }) {
               <ReportDetail
                 caseId={detailCaseId}
                 userRole={user?.role}
+                user={user}
                 allowCrud={detailSource === 'my-reports'}
                 onBack={() => { history.back(); }}
                 onDeleted={() => {

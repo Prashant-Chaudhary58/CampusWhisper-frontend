@@ -94,7 +94,7 @@ function EditPanel({ report, onSave, onCancel }) {
 }
 
 // ─── Main Component ─────────────────────────────────────────────────────────
-export default function ReportDetail({ caseId, userRole, allowCrud = false, onBack, onDeleted }) {
+export default function ReportDetail({ caseId, userRole, user, allowCrud = false, onBack, onDeleted }) {
   const [report, setReport]           = useState(null);
   const [comments, setComments]       = useState([]);
   const [commentText, setCommentText] = useState('');
@@ -316,12 +316,24 @@ export default function ReportDetail({ caseId, userRole, allowCrud = false, onBa
               )}
               {comments.map((c, i) => {
                 const isStaff = c.authorRole !== 'Reporter';
-                let author = isStaff ? c.authorRole : 'Student Reporter';
-                if (c.author?.email) author += ` (${c.author.email})`;
-                if (!c.author && !isStaff) author = 'Anonymous Reporter';
+                
+                // Securely check if the comment is written by the current logged-in user:
+                // 1) Match by email directly if available.
+                // 2) If the report is anonymous, the reporter's email is set to null in the response.
+                //    So if the current user is the owner of the report, and the authorRole is 'Reporter' 
+                //    with no email, it belongs to the current user.
+                const isMe = (c.author?.email && c.author.email === user?.email) || 
+                             (report.isOwner && c.authorRole === 'Reporter' && !c.author);
+
+                let author = isMe ? 'You' : (isStaff ? c.authorRole : 'Student Reporter');
+                if (!isMe && c.author?.email) author += ` (${c.author.email})`;
+                if (!isMe && !c.author && !isStaff) author = 'Anonymous Reporter';
+
+                // Assign the bubble class: me floats to the right, moderator and regular reporters float left
+                const bubbleClass = isMe ? 'me' : (isStaff ? 'moderator' : '');
 
                 return (
-                  <div key={i} className={`comment-bubble${isStaff ? ' moderator' : ''}`}>
+                  <div key={i} className={`comment-bubble ${bubbleClass}`}>
                     <div className="comment-meta">
                       <span style={{ fontWeight: 600 }}>{author}</span>
                       <span>{new Date(c.createdAt).toLocaleTimeString()}</span>
