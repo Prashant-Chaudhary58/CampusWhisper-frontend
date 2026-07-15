@@ -58,11 +58,11 @@ class ReportService {
     return data.comments;
   }
 
-  async postComment(caseId, text) {
+  async postComment(caseId, text, isAnonymous = false) {
     const res = await this.#request(`/api/reports/${caseId}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text, isAnonymous })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed to post comment');

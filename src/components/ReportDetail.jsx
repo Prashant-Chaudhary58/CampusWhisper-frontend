@@ -98,6 +98,7 @@ export default function ReportDetail({ caseId, userRole, user, allowCrud = false
   const [report, setReport]           = useState(null);
   const [comments, setComments]       = useState([]);
   const [commentText, setCommentText] = useState('');
+  const [commentAnon, setCommentAnon] = useState(false);
   const [busy, setBusy]               = useState(false);
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState('');
@@ -149,8 +150,9 @@ export default function ReportDetail({ caseId, userRole, user, allowCrud = false
     if (!commentText.trim()) return;
     setBusy(true);
     try {
-      await reportService.postComment(caseId, commentText.trim());
+      await reportService.postComment(caseId, commentText.trim(), commentAnon);
       setCommentText('');
+      setCommentAnon(false);
       await loadComments(true); // always scroll after manually sending
     } catch (err) { setError(err.message); }
     finally { setBusy(false); }
@@ -344,19 +346,33 @@ export default function ReportDetail({ caseId, userRole, user, allowCrud = false
               <div ref={commentsEndRef} />
             </div>
 
-            <form onSubmit={handleCommentSubmit} className="comment-input-area">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Add a comment…"
-                value={commentText}
-                onChange={e => setCommentText(e.target.value)}
-                style={{ flex: 1 }}
-              />
-              <button type="submit" className="btn btn-primary" disabled={busy}
-                style={{ width: 'auto', padding: '0.8rem 1.4rem', whiteSpace: 'nowrap' }}>
-                {busy ? '…' : 'Send'}
-              </button>
+            <form onSubmit={handleCommentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+              <div className="comment-input-area" style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Add a comment…"
+                  value={commentText}
+                  onChange={e => setCommentText(e.target.value)}
+                  style={{ flex: 1 }}
+                />
+                <button type="submit" className="btn btn-primary" disabled={busy}
+                  style={{ width: 'auto', padding: '0.8rem 1.4rem', whiteSpace: 'nowrap' }}>
+                  {busy ? '…' : 'Send'}
+                </button>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <input
+                  type="checkbox"
+                  id="comment-anonymous"
+                  checked={commentAnon}
+                  onChange={e => setCommentAnon(e.target.checked)}
+                  style={{ width: 'auto', cursor: 'pointer', margin: 0 }}
+                />
+                <label htmlFor="comment-anonymous" style={{ cursor: 'pointer', margin: 0, textTransform: 'none', fontWeight: 'normal', userSelect: 'none' }}>
+                  Comment anonymously
+                </label>
+              </div>
             </form>
           </div>
         </div>
