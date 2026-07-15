@@ -322,8 +322,7 @@ export default function ReportDetail({ caseId, userRole, user, allowCrud = false
                 // 2) If the report is anonymous, the reporter's email is set to null in the response.
                 //    So if the current user is the owner of the report, and the authorRole is 'Reporter' 
                 //    with no email, it belongs to the current user.
-                const isMe = (c.author?.email && c.author.email === user?.email) || 
-                             (report.isOwner && c.authorRole === 'Reporter' && !c.author);
+                const isMe = !!c.isMe;
 
                 let author = isMe ? 'You' : (isStaff ? c.authorRole : 'Student Reporter');
                 if (!isMe && c.author?.email) author += ` (${c.author.email})`;
